@@ -91,7 +91,7 @@
   height: 100%;
 }
 
-.terrain {
+#terrain {
   display: grid;
   grid-template-columns: repeat(200, 1fr);
   grid-template-rows: repeat(var(--rows-count), 1fr);
@@ -102,7 +102,7 @@
 }
 .toolsBox {
   display: grid;
-  grid-template-rows: repeat(5, 1fr);
+  grid-template-rows: 1fr 1fr 2fr;
   /* background-color: brown; */
   height: 100%;
   width: 18%;
@@ -116,10 +116,40 @@
 
 .unit:hover {
   border: 1px solid #fff;
+  /* cursor: url("./images/axe.png"), auto; */
+}
+
+[Data-tool="shovel"] {
+  cursor: url("./images/shovel.png"), auto;
+}
+
+[Data-tool="axe"] {
+  cursor: url("./images/axe.png"), auto;
+}
+
+[Data-tool="pickaxe"] {
+  cursor: url("./images/pickaxe.png"), auto;
+}
+
+.tool2 {
+  border: 1px solid black;
+}
+
+.tools {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
 }
 
 .tool {
-  border: 1px solid black;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.tools .current {
+  border-color: red;
 }
 
 /*? Scroll bar style */
@@ -182,7 +212,7 @@
     flex-direction: column;
   }
 
-  .terrain {
+  #terrain {
     height: 85%;
     width: 100%;
   }
@@ -193,6 +223,12 @@
     /* max-height: 230px; */
     /* max-width: unset; */
     grid-template-rows: 1fr;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: 1fr 1fr 2fr;
+  }
+
+  .tools {
+    gap: 0.7rem;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 }

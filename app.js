@@ -7,9 +7,9 @@ function startGame() {
     setUnits(game);
     // console.dir(game.units);
     // console.dir(game.tools);
-    drawTools(game);
     drawTerrain(game);
     styleClouds(game);
+    toolBoxListener();
     setTimeout(() => {
       splash.style.display = "none";
       splash.style.zIndex = "-100";
@@ -18,7 +18,7 @@ function startGame() {
 }
 
 function setUnits({ units, ROW_NUM, COL_NUM }) {
-  const terrian = document.querySelector(".terrain");
+  const terrian = document.querySelector("#terrain");
   for (let i = 0; i < ROW_NUM; i++) {
     const row = new Array(COL_NUM);
     for (let j = 0; j < COL_NUM; j++) {
@@ -52,7 +52,7 @@ function giveType(unit, index) {
     case 0:
       break;
     case 1:
-      if (unit.yIndex === 0) {
+      if (unit.yIndex === 0 || unit.yIndex === 199) {
         break;
       }
       unit.setAttribute("Data-type", "cloud");
@@ -85,50 +85,28 @@ function giveType(unit, index) {
   }
 }
 
-function drawTools({ tools }) {
-  const toolBox = document.querySelector(".toolsBox");
-  for (let i = 0; i < 5; i++) {
-    const tool = document.createElement("div");
-    tool.classList.toggle("tool");
-    tools.push(tool);
-    toolBox.appendChild(tool);
-  }
-}
-
-function styleClouds({ units }) {
+function styleClouds({ units, COL_NUM }) {
   for (let i = 1; i < 5; i++) {
-    for (let j = 1; j < 198 - 1; j++) {
-      if (
-        !units[i - 1][j].getAttribute("Data-type") &&
-        !units[i][j - 1].getAttribute("Data-type")
-      ) {
+    for (let j = 1; j < COL_NUM - 1; j++) {
+      let top = !units[i - 1][j].getAttribute("Data-type"),
+        left = !units[i][j - 1].getAttribute("Data-type"),
+        bot = !units[i + 1][j].getAttribute("Data-type"),
+        right = !units[i][j + 1].getAttribute("Data-type");
+      if (top && bot && left && right) {
+        units[i][j].removeAttribute("Data-type");
+        continue;
+      }
+      if (top && left) {
         units[i][j].style.borderTopLeftRadius = "40%";
       }
-      if (
-        !units[i - 1][j].getAttribute("Data-type") &&
-        !units[i][j + 1].getAttribute("Data-type")
-      ) {
+      if (top && right) {
         units[i][j].style.borderTopRightRadius = "40%";
       }
-      if (
-        !units[i + 1][j].getAttribute("Data-type") &&
-        !units[i][j - 1].getAttribute("Data-type")
-      ) {
+      if (bot && left) {
         units[i][j].style.borderBottomLeftRadius = "40%";
       }
-      if (
-        !units[i + 1][j].getAttribute("Data-type") &&
-        !units[i][j + 1].getAttribute("Data-type")
-      ) {
+      if (bot && right) {
         units[i][j].style.borderBottomRightRadius = "40%";
-      }
-      if (
-        !units[i - 1][j].getAttribute("Data-type") &&
-        !units[i][j - 1].getAttribute("Data-type") &&
-        !units[i + 1][j].getAttribute("Data-type") &&
-        !units[i][j + 1].getAttribute("Data-type")
-      ) {
-        units[i][j].removeAttribute("Data-type");
       }
     }
   }
@@ -136,17 +114,21 @@ function styleClouds({ units }) {
 
 function makeTree(unit, index) {
   unit.setAttribute("Data-type", "tree");
-  game.units[index - 1][unit.yIndex].setAttribute("Data-type", "tree");
-  game.units[index - 2][unit.yIndex].setAttribute("Data-type", "tree");
-  game.units[index - 3][unit.yIndex - 1].setAttribute("Data-type", "treeLeafs");
-  game.units[index - 3][unit.yIndex].setAttribute("Data-type", "treeLeafs");
-  game.units[index - 3][unit.yIndex + 1].setAttribute("Data-type", "treeLeafs");
-  game.units[index - 4][unit.yIndex - 1].setAttribute("Data-type", "treeLeafs");
-  game.units[index - 4][unit.yIndex].setAttribute("Data-type", "treeLeafs");
-  game.units[index - 4][unit.yIndex + 1].setAttribute("Data-type", "treeLeafs");
-  game.units[index - 5][unit.yIndex - 1].setAttribute("Data-type", "treeLeafs");
-  game.units[index - 5][unit.yIndex].setAttribute("Data-type", "treeLeafs");
-  game.units[index - 5][unit.yIndex + 1].setAttribute("Data-type", "treeLeafs");
+  for (let i = 1; i < 6; i++) {
+    if (i < 3) {
+      game.units[index - i][unit.yIndex].setAttribute("Data-type", "tree");
+    } else {
+      game.units[index - i][unit.yIndex - 1].setAttribute(
+        "Data-type",
+        "treeLeafs"
+      );
+      game.units[index - i][unit.yIndex].setAttribute("Data-type", "treeLeafs");
+      game.units[index - i][unit.yIndex + 1].setAttribute(
+        "Data-type",
+        "treeLeafs"
+      );
+    }
+  }
 }
 
 function makeRock(unit, index) {
@@ -199,12 +181,36 @@ function removeBlock(x, y) {
   }
 }
 
+function toolBoxListener() {
+  const tera = document.querySelector("#terrain");
+  const tools = document.querySelectorAll(".tools img");
+  for (let i = 0; i < 3; i++) {
+    tools[i].addEventListener("click", () => {
+      if (!tools[i].classList.contains("current")) {
+        tools.forEach((tool) => {
+          tool.classList.remove("current");
+        });
+        tools[i].classList.add("current");
+        if (i === 0) {
+          game.currTool = "shovel";
+        } else if (i === 1) {
+          game.currTool = "pickaxe";
+        } else {
+          game.currTool = "axe";
+        }
+        // tera.style.cursor = `url("./images/${game.currTool}.png"), auto;`;
+        tera.setAttribute("Data-tool", `${game.currTool}`);
+      }
+    });
+  }
+}
+
 const game = {
   units: [],
   tools: [],
   COL_NUM: 200,
   ROW_NUM: 20,
-  currTool: "none",
+  currTool: "shovel",
 };
 
 const matrix = [
@@ -235,19 +241,29 @@ window.addEventListener("click", (e) => {
     y = e.target.yIndex;
   switch (e.target.getAttribute("Data-type")) {
     case "grass":
-      removeBlock(x, y);
+      if (game.currTool === "shovel") {
+        removeBlock(x, y);
+      }
       break;
     case "dirt":
-      removeBlock(x, y);
+      if (game.currTool === "shovel") {
+        removeBlock(x, y);
+      }
       break;
     case "tree":
-      removeBlock(x, y);
+      if (game.currTool === "axe") {
+        removeBlock(x, y);
+      }
       break;
     case "treeLeafs":
-      removeBlock(x, y);
+      if (game.currTool === "axe") {
+        removeBlock(x, y);
+      }
       break;
     case "rock":
-      removeBlock(x, y);
+      if (game.currTool === "pickaxe") {
+        removeBlock(x, y);
+      }
       break;
     default:
       break;
