@@ -95,7 +95,7 @@
   display: grid;
   grid-template-columns: repeat(200, 1fr);
   grid-template-rows: repeat(var(--rows-count), 1fr);
-  /* background-color: aqua; */
+  background-color: aqua;
   height: 100%;
   width: 82%;
   overflow: auto;
@@ -112,7 +112,10 @@
 .unit {
   min-height: calc(100% / var(--rows-count));
   aspect-ratio: 1/1;
-  /* border: 1px solid black; */
+}
+
+.unit:hover {
+  border: 1px solid #fff;
 }
 
 .tool {
@@ -166,7 +169,7 @@
 }
 
 [Data-type="grass"] {
-  background: url(./images/grass.jpg) no-repeat center center/cover;
+  background: url(./images/grass.jpg) no-repeat center/cover;
 }
 
 [Data-type="dirt"] {
