@@ -101,6 +101,7 @@
   overflow: auto;
 }
 .toolsBox {
+  visibility: hidden;
   display: grid;
   grid-template-rows: 1fr 1fr 2fr;
   /* background-color: brown; */
@@ -119,6 +120,7 @@
   /* cursor: url("./images/axe.png"), auto; */
 }
 
+/** --------------  tools ------------------ */
 [Data-tool="shovel"] {
   cursor: url("./images/shovel.png"), auto;
 }
@@ -150,6 +152,46 @@
 
 .tools .current {
   border-color: red;
+}
+
+/** --------------- bank ------------------- */
+.bank {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-items: center;
+}
+
+.bank div {
+  margin: 0.3rem 0.8rem;
+  aspect-ratio: 1/1;
+  /* max-width: 100px; */
+}
+
+.bank div span {
+  color: red;
+  padding-left: 4px;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.bank-dirt {
+  background: url("./images/dirt1.jpeg") no-repeat center center/cover;
+}
+
+.bank-grass {
+  background: url("./images/grass.jpg") no-repeat top center/cover;
+}
+
+.bank-rock {
+  background: url("./images/rock.jpg") no-repeat center center/cover;
+}
+
+.bank-tree {
+  background: url("./images/tree.png") no-repeat center center/cover;
+}
+
+.bank-treeLeafs {
+  background: url("./images/leafs.jpg") no-repeat center center/cover;
 }
 
 /*? Scroll bar style */
@@ -199,7 +241,7 @@
 }
 
 [Data-type="grass"] {
-  background: url(./images/grass.jpg) no-repeat center/cover;
+  background: url(./images/grass.jpg) no-repeat center center/cover;
 }
 
 [Data-type="dirt"] {
@@ -213,11 +255,11 @@
   }
 
   #terrain {
-    height: 85%;
+    height: 83%;
     width: 100%;
   }
   .toolsBox {
-    height: 15%;
+    height: 17%;
     min-height: 100px;
     width: 100%;
     /* max-height: 230px; */
@@ -230,5 +272,20 @@
     gap: 0.7rem;
     flex-direction: row;
     flex-wrap: wrap;
+  }
+
+  /* .bank {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    justify-items: center;
+  } */
+
+  .bank div {
+    margin: 0;
+    max-width: 40px;
+  }
+
+  .bank div span {
+    font-size: 1rem;
   }
 }

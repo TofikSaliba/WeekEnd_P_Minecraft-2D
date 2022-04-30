@@ -4,6 +4,8 @@ function startGame() {
     const splash = document.querySelector("#splash");
     splash.classList.toggle("fade-in2");
     splash.style.animation = "fadeOut 1.5s ease-in forwards";
+    document.querySelector(".toolsBox").style.visibility = "visible";
+
     setUnits(game);
     // console.dir(game.units);
     // console.dir(game.tools);
@@ -52,7 +54,7 @@ function giveType(unit, index) {
     case 0:
       break;
     case 1:
-      if (unit.yIndex === 0 || unit.yIndex === 199) {
+      if (unit.yIndex === 0 || unit.yIndex === 199 || unit.yIndex % 20 > 12) {
         break;
       }
       unit.setAttribute("Data-type", "cloud");
@@ -178,7 +180,9 @@ function removeBlock(x, y) {
     (game.units[x][y + 1] && !game.units[x][y + 1].getAttribute("Data-type"))
   ) {
     game.units[x][y].removeAttribute("Data-type");
+    return true;
   }
+  return false;
 }
 
 function toolBoxListener() {
@@ -211,14 +215,15 @@ const game = {
   COL_NUM: 200,
   ROW_NUM: 20,
   currTool: "shovel",
+  bank: new Array(5).fill(0),
 };
 
 const matrix = [
   [0, 0, 0, 0, 0],
-  [0, 0, 0, 1, 1],
-  [1, 0, 0, 1, 0],
-  [0, 1, 0, 1, 0],
-  [0, 0, 1, 1, 0],
+  [0, 1, 0, 0, 1],
+  [1, 0, 1, 1, 0],
+  [0, 1, 1, 0, 1],
+  [0, 1, 1, 0, 0],
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
@@ -239,30 +244,51 @@ const matrix = [
 window.addEventListener("click", (e) => {
   let x = e.target.xIndex,
     y = e.target.yIndex;
+  const bankCounters = document.querySelectorAll(".bank span");
   switch (e.target.getAttribute("Data-type")) {
     case "grass":
       if (game.currTool === "shovel") {
-        removeBlock(x, y);
+        if (removeBlock(x, y)) {
+          game.bank[1] += 1;
+          bankCounters[1].style.color = "#fff";
+          bankCounters[1].innerText = game.bank[1];
+        }
       }
       break;
     case "dirt":
       if (game.currTool === "shovel") {
-        removeBlock(x, y);
+        if (removeBlock(x, y)) {
+          game.bank[0] += 1;
+          bankCounters[0].style.color = "#fff";
+          bankCounters[0].innerText = game.bank[0];
+        }
       }
       break;
     case "tree":
       if (game.currTool === "axe") {
-        removeBlock(x, y);
+        if (removeBlock(x, y)) {
+          game.bank[3] += 1;
+          bankCounters[3].style.color = "#fff";
+          bankCounters[3].innerText = game.bank[3];
+        }
       }
       break;
     case "treeLeafs":
       if (game.currTool === "axe") {
-        removeBlock(x, y);
+        if (removeBlock(x, y)) {
+          game.bank[4] += 1;
+          bankCounters[4].style.color = "#fff";
+          bankCounters[4].innerText = game.bank[4];
+        }
       }
       break;
     case "rock":
       if (game.currTool === "pickaxe") {
-        removeBlock(x, y);
+        if (removeBlock(x, y)) {
+          game.bank[2] += 1;
+          bankCounters[2].style.color = "#fff";
+          bankCounters[2].innerText = game.bank[2];
+        }
       }
       break;
     default:
