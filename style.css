@@ -156,6 +156,10 @@
   cursor: url("./images/pickaxe.png"), auto;
 }
 
+[Data-tool="build"] {
+  cursor: url("./images/build.png"), auto;
+}
+
 .tool2 {
   border: 1px solid black;
 }
@@ -173,10 +177,6 @@
   border: 2px solid transparent;
 }
 
-.tools .current {
-  border-color: red;
-}
-
 /** --------------- bank ------------------- */
 .bank {
   display: grid;
@@ -184,10 +184,16 @@
   justify-items: center;
 }
 
-.bank div {
+.bank-item {
   margin: 0.3rem 0.8rem;
   aspect-ratio: 1/1;
-  /* min-width: 60px; */
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.current {
+  /* border: 2px solid red; */
+  border-color: red;
 }
 
 .bank div span {
@@ -201,7 +207,7 @@
   background: url("./images/dirt1.jpeg") no-repeat center center/cover;
 }
 
-.bank-grass {
+.bank-dirtGrass {
   background: url("./images/grass.jpg") no-repeat top center/cover;
 }
 
@@ -242,7 +248,7 @@
   background: url(./images/rock.webp) no-repeat center center/cover;
 }
 
-[Data-type="grass"] {
+[Data-type="dirtGrass"] {
   background: url(./images/grass.webp) no-repeat center center/cover;
 }
 

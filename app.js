@@ -12,10 +12,11 @@ function startGame() {
     drawTerrain(game);
     styleClouds(game);
     toolBoxListener();
+    bankListener();
     setTimeout(() => {
       splash.style.display = "none";
       splash.style.zIndex = "-100";
-      startListening();
+      startListening(game);
     }, 1500);
   });
 }
@@ -82,7 +83,7 @@ function giveType(unit, index) {
       }
       break;
     case 4:
-      unit.setAttribute("Data-type", "grass");
+      unit.setAttribute("Data-type", "dirtGrass");
       break;
     case 5:
       unit.setAttribute("Data-type", "dirt");
@@ -189,6 +190,37 @@ function removeBlock(x, y) {
   return false;
 }
 
+function buildBlock(x, y, building) {
+  let temp = building.block;
+  if (building.block === "treeLeafs") {
+    temp = "tree";
+  } else if (building.block === "dirtGrass") {
+    temp = "dirt";
+  }
+  if (
+    (game.units[x - 1] &&
+      game.units[x - 1][y].getAttribute("Data-type") &&
+      game.units[x - 1][y].getAttribute("Data-type").indexOf(temp) !== -1) ||
+    (game.units[x + 1] &&
+      game.units[x + 1][y].getAttribute("Data-type") &&
+      game.units[x + 1][y].getAttribute("Data-type").indexOf(temp) !== -1) ||
+    (game.units[x] &&
+      game.units[x][y - 1] &&
+      game.units[x][y - 1].getAttribute("Data-type") &&
+      game.units[x][y - 1].getAttribute("Data-type").indexOf(temp) !== -1) ||
+    (game.units[x] &&
+      game.units[x][y + 1] &&
+      game.units[x][y + 1].getAttribute("Data-type") &&
+      game.units[x][y + 1].getAttribute("Data-type").indexOf(temp) !== -1)
+  ) {
+    if (game.bank[building[building.block]] > 0) {
+      game.units[x][y].setAttribute("Data-type", building.block);
+      return true;
+    }
+  }
+  return false;
+}
+
 function removeTree(x, y) {
   if (!game.units[x - 1][y].getAttribute("Data-type")) {
     game.units[x][y].removeAttribute("Data-type");
@@ -200,11 +232,15 @@ function removeTree(x, y) {
 function toolBoxListener() {
   const tera = document.querySelector("#terrain");
   const tools = document.querySelectorAll(".tools img");
+  const bank = document.querySelectorAll(".bank div");
   for (let i = 0; i < 3; i++) {
     tools[i].addEventListener("click", () => {
       if (!tools[i].classList.contains("current")) {
         tools.forEach((tool) => {
           tool.classList.remove("current");
+        });
+        bank.forEach((item) => {
+          item.classList.remove("current");
         });
         tools[i].classList.add("current");
         if (i === 0) {
@@ -220,13 +256,37 @@ function toolBoxListener() {
   }
 }
 
-function startListening() {
-  window.addEventListener("click", (e) => {
+function bankListener() {
+  const tera = document.querySelector("#terrain");
+  const tools = document.querySelectorAll(".tools img");
+  const bank = document.querySelectorAll(".bank div");
+  for (let i = 0; i < 5; i++) {
+    bank[i].addEventListener("click", () => {
+      if (!bank[i].classList.contains("current")) {
+        bank.forEach((item) => {
+          item.classList.remove("current");
+        });
+        tools.forEach((tool) => {
+          tool.classList.remove("current");
+        });
+        game.building.block = bank[i].classList[0].split("-")[1];
+        bank[i].classList.add("current");
+        game.currTool = "build";
+
+        tera.setAttribute("Data-tool", `${game.currTool}`);
+      }
+    });
+  }
+}
+
+function startListening({ building }) {
+  const tera = document.querySelector("#terrain");
+  tera.addEventListener("click", (e) => {
     let x = e.target.xIndex,
       y = e.target.yIndex;
     const bankCounters = document.querySelectorAll(".bank span");
     switch (e.target.getAttribute("Data-type")) {
-      case "grass":
+      case "dirtGrass":
         if (game.currTool === "shovel") {
           if (removeBlock(x, y)) {
             game.bank[1] += 1;
@@ -272,6 +332,16 @@ function startListening() {
         }
         break;
       default:
+        let index = building[building.block];
+        if (game.currTool === "build") {
+          if (buildBlock(x, y, building)) {
+            game.bank[index] -= 1;
+            bankCounters[index].innerText = game.bank[index];
+            if (game.bank[index] === 0) {
+              bankCounters[index].style.color = "red";
+            }
+          }
+        }
         break;
     }
   });
@@ -283,6 +353,14 @@ const game = {
   COL_NUM: 200,
   ROW_NUM: 20,
   currTool: "shovel",
+  building: {
+    block: "",
+    dirt: 0,
+    dirtGrass: 1,
+    rock: 2,
+    tree: 3,
+    treeLeafs: 4,
+  },
   bank: new Array(5).fill(0),
 };
 
