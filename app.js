@@ -32,6 +32,9 @@ function setUnits({ units, ROW_NUM, COL_NUM }) {
       } else {
         unit.classList.toggle("emptyGround");
       }
+      if (/Firefox/.test(navigator.userAgent)) {
+        unit.style.minHeight = `${98.25 / ROW_NUM}vh`;
+      }
       unit.xIndex = i;
       unit.yIndex = j;
       terrian.appendChild(unit);
@@ -167,7 +170,6 @@ function makeRock(unit, index) {
       if (!game.units[index][unit.yIndex + 2].getAttribute("Data-type")) {
         game.units[index][unit.yIndex + 2].setAttribute("Data-type", "rock");
       }
-
       break;
     default:
       break;
@@ -181,6 +183,14 @@ function removeBlock(x, y) {
     (game.units[x][y - 1] && !game.units[x][y - 1].getAttribute("Data-type")) ||
     (game.units[x][y + 1] && !game.units[x][y + 1].getAttribute("Data-type"))
   ) {
+    game.units[x][y].removeAttribute("Data-type");
+    return true;
+  }
+  return false;
+}
+
+function removeTree(x, y) {
+  if (!game.units[x - 1][y].getAttribute("Data-type")) {
     game.units[x][y].removeAttribute("Data-type");
     return true;
   }
@@ -204,7 +214,6 @@ function toolBoxListener() {
         } else {
           game.currTool = "axe";
         }
-        // tera.style.cursor = `url("./images/${game.currTool}.png"), auto;`;
         tera.setAttribute("Data-tool", `${game.currTool}`);
       }
     });
@@ -237,7 +246,7 @@ function startListening() {
         break;
       case "tree":
         if (game.currTool === "axe") {
-          if (removeBlock(x, y)) {
+          if (removeTree(x, y)) {
             game.bank[3] += 1;
             bankCounters[3].style.color = "#fff";
             bankCounters[3].innerText = game.bank[3];
