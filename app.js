@@ -177,7 +177,45 @@ function makeRock(unit, index) {
   }
 }
 
+function checkCollapse(x, y) {
+  let top = game.units[x - 1]
+      ? game.units[x - 1][y].getAttribute("Data-type")
+      : true,
+    left = game.units[x][y - 1]
+      ? game.units[x][y - 1].getAttribute("Data-type")
+      : true,
+    bot = game.units[x + 1]
+      ? game.units[x + 1][y].getAttribute("Data-type")
+      : true,
+    right = game.units[x][y + 1]
+      ? game.units[x][y + 1].getAttribute("Data-type")
+      : true;
+  if ((top && bot && !left && !right) || (!top && !bot && left && right)) {
+    return true;
+  }
+  if (
+    (top || left || right) &&
+    game.units[x][y].getAttribute("Data-type") === "treeLeafs" &&
+    bot === "tree"
+  ) {
+    return true;
+  }
+  const topLeft = !game.units[x - 1][y - 1].getAttribute("Data-type"),
+    topRight = !game.units[x - 1][y + 1].getAttribute("Data-type");
+  if (
+    (top && !left && topRight) ||
+    (top && !right && topLeft) ||
+    (top && topLeft && topRight)
+  ) {
+    return true;
+  }
+  return false;
+}
+
 function removeBlock(x, y) {
+  if (checkCollapse(x, y)) {
+    return false;
+  }
   if (
     !game.units[x - 1][y].getAttribute("Data-type") ||
     (game.units[x + 1] && !game.units[x + 1][y].getAttribute("Data-type")) ||
@@ -192,6 +230,17 @@ function removeBlock(x, y) {
 
 function buildBlock(x, y, building) {
   let temp = building.block;
+  if (
+    temp === "tree" &&
+    game.units[x + 1] &&
+    game.units[x + 1][y].getAttribute("Data-type") &&
+    game.units[x + 1][y].getAttribute("Data-type") === "dirtGrass"
+  ) {
+    if (game.bank[building[building.block]] > 0) {
+      game.units[x][y].setAttribute("Data-type", building.block);
+      return true;
+    }
+  }
   if (building.block === "treeLeafs") {
     temp = "tree";
   } else if (building.block === "dirtGrass") {
@@ -213,6 +262,12 @@ function buildBlock(x, y, building) {
       game.units[x][y + 1].getAttribute("Data-type") &&
       game.units[x][y + 1].getAttribute("Data-type").indexOf(temp) !== -1)
   ) {
+    if (game.bank[building[building.block]] > 0) {
+      game.units[x][y].setAttribute("Data-type", building.block);
+      return true;
+    }
+  }
+  if (x + 1 === 20 && temp.indexOf("dirt") !== -1) {
     if (game.bank[building[building.block]] > 0) {
       game.units[x][y].setAttribute("Data-type", building.block);
       return true;
