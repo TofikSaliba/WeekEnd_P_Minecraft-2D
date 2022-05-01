@@ -121,7 +121,8 @@
   background-color: aqua;
   height: 100%;
   width: 82%;
-  overflow: auto;
+  /* overflow: auto; */
+  overflow-x: scroll;
 }
 
 .toolsBox {
