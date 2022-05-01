@@ -96,6 +96,9 @@ function giveType(unit, index) {
 function styleClouds({ units, COL_NUM }) {
   for (let i = 1; i < 5; i++) {
     for (let j = 1; j < COL_NUM - 1; j++) {
+      if (!units[i][j].getAttribute("Data-type")) {
+        continue;
+      }
       let top = !units[i - 1][j].getAttribute("Data-type"),
         left = !units[i][j - 1].getAttribute("Data-type"),
         bot = !units[i + 1][j].getAttribute("Data-type"),
@@ -200,8 +203,16 @@ function checkCollapse(x, y) {
   ) {
     return true;
   }
-  const topLeft = !game.units[x - 1][y - 1].getAttribute("Data-type"),
-    topRight = !game.units[x - 1][y + 1].getAttribute("Data-type");
+  const topLeft = game.units[x - 1]
+      ? game.units[x - 1][y - 1]
+        ? !game.units[x - 1][y - 1].getAttribute("Data-type")
+        : false
+      : false,
+    topRight = game.units[x - 1]
+      ? game.units[x - 1][y + 1]
+        ? !game.units[x - 1][y + 1].getAttribute("Data-type")
+        : false
+      : false;
   if (
     (top && !left && topRight) ||
     (top && !right && topLeft) ||
@@ -217,7 +228,7 @@ function removeBlock(x, y) {
     return false;
   }
   if (
-    !game.units[x - 1][y].getAttribute("Data-type") ||
+    (game.units[x - 1] && !game.units[x - 1][y].getAttribute("Data-type")) ||
     (game.units[x + 1] && !game.units[x + 1][y].getAttribute("Data-type")) ||
     (game.units[x][y - 1] && !game.units[x][y - 1].getAttribute("Data-type")) ||
     (game.units[x][y + 1] && !game.units[x][y + 1].getAttribute("Data-type"))
@@ -225,6 +236,11 @@ function removeBlock(x, y) {
     game.units[x][y].removeAttribute("Data-type");
     return true;
   }
+  if (x === 0) {
+    game.units[x][y].removeAttribute("Data-type");
+    return true;
+  }
+
   return false;
 }
 
@@ -341,6 +357,8 @@ function startListening({ building }) {
       y = e.target.yIndex;
     const bankCounters = document.querySelectorAll(".bank span");
     switch (e.target.getAttribute("Data-type")) {
+      case "cloud":
+        break;
       case "dirtGrass":
         if (game.currTool === "shovel") {
           if (removeBlock(x, y)) {
