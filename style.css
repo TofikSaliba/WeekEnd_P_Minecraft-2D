@@ -83,10 +83,33 @@
   animation: fadeIn 1.5s ease-in forwards;
 }
 
-/*! gamebody */
+/*? Scroll bar style */
+
+::-webkit-scrollbar {
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/*! ----------------- gamebody -------------- */
 .container {
   display: flex;
   flex-direction: row;
+  flex-grow: 1;
   width: 100%;
   height: 100%;
 }
@@ -100,6 +123,7 @@
   width: 82%;
   overflow: auto;
 }
+
 .toolsBox {
   visibility: hidden;
   display: grid;
@@ -111,13 +135,13 @@
 }
 
 .unit {
-  min-height: calc(100% / var(--rows-count));
+  /* min-height: calc(100% / var(--rows-count)); */
+  min-height: calc(99vh / var(--rows-count));
   aspect-ratio: 1/1;
 }
 
 .unit:hover {
   border: 1px solid #fff;
-  /* cursor: url("./images/axe.png"), auto; */
 }
 
 /** --------------  tools ------------------ */
@@ -194,27 +218,6 @@
   background: url("./images/leafs.jpg") no-repeat center center/cover;
 }
 
-/*? Scroll bar style */
-::-webkit-scrollbar {
-  height: 10px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
 /*! units style */
 .emptySky {
   background: aqua;
@@ -233,19 +236,19 @@
 }
 
 [Data-type="tree"] {
-  background: url(./images/tree.png) no-repeat center center/cover;
+  background: url(./images/tree.webp) no-repeat center center/cover;
 }
 
 [Data-type="rock"] {
-  background: url(./images/rock.jpg) no-repeat center center/cover;
+  background: url(./images/rock.webp) no-repeat center center/cover;
 }
 
 [Data-type="grass"] {
-  background: url(./images/grass.jpg) no-repeat center center/cover;
+  background: url(./images/grass.webp) no-repeat center center/cover;
 }
 
 [Data-type="dirt"] {
-  background: url(./images/dirt1.jpeg) no-repeat center center/cover;
+  background: url(./images/dirt.webp) no-repeat center center/cover;
 }
 
 /*! smaller screens */

@@ -15,6 +15,7 @@ function startGame() {
     setTimeout(() => {
       splash.style.display = "none";
       splash.style.zIndex = "-100";
+      startListening();
     }, 1500);
   });
 }
@@ -71,7 +72,8 @@ function giveType(unit, index) {
     case 3:
       if (
         ((Math.random() * 2) | 0) === 1 &&
-        (unit.yIndex < 198 || unit.yIndex > 1)
+        unit.yIndex < 198 &&
+        unit.yIndex > 1
       ) {
         makeRock(unit, index);
       }
@@ -209,6 +211,63 @@ function toolBoxListener() {
   }
 }
 
+function startListening() {
+  window.addEventListener("click", (e) => {
+    let x = e.target.xIndex,
+      y = e.target.yIndex;
+    const bankCounters = document.querySelectorAll(".bank span");
+    switch (e.target.getAttribute("Data-type")) {
+      case "grass":
+        if (game.currTool === "shovel") {
+          if (removeBlock(x, y)) {
+            game.bank[1] += 1;
+            bankCounters[1].style.color = "#fff";
+            bankCounters[1].innerText = game.bank[1];
+          }
+        }
+        break;
+      case "dirt":
+        if (game.currTool === "shovel") {
+          if (removeBlock(x, y)) {
+            game.bank[0] += 1;
+            bankCounters[0].style.color = "#fff";
+            bankCounters[0].innerText = game.bank[0];
+          }
+        }
+        break;
+      case "tree":
+        if (game.currTool === "axe") {
+          if (removeBlock(x, y)) {
+            game.bank[3] += 1;
+            bankCounters[3].style.color = "#fff";
+            bankCounters[3].innerText = game.bank[3];
+          }
+        }
+        break;
+      case "treeLeafs":
+        if (game.currTool === "axe") {
+          if (removeBlock(x, y)) {
+            game.bank[4] += 1;
+            bankCounters[4].style.color = "#fff";
+            bankCounters[4].innerText = game.bank[4];
+          }
+        }
+        break;
+      case "rock":
+        if (game.currTool === "pickaxe") {
+          if (removeBlock(x, y)) {
+            game.bank[2] += 1;
+            bankCounters[2].style.color = "#fff";
+            bankCounters[2].innerText = game.bank[2];
+          }
+        }
+        break;
+      default:
+        break;
+    }
+  });
+}
+
 const game = {
   units: [],
   tools: [],
@@ -240,75 +299,5 @@ const matrix = [
   [5, 5, 5, 5, 5],
   [5, 5, 5, 5, 5],
 ];
-
-window.addEventListener("click", (e) => {
-  let x = e.target.xIndex,
-    y = e.target.yIndex;
-  const bankCounters = document.querySelectorAll(".bank span");
-  switch (e.target.getAttribute("Data-type")) {
-    case "grass":
-      if (game.currTool === "shovel") {
-        if (removeBlock(x, y)) {
-          game.bank[1] += 1;
-          bankCounters[1].style.color = "#fff";
-          bankCounters[1].innerText = game.bank[1];
-        }
-      }
-      break;
-    case "dirt":
-      if (game.currTool === "shovel") {
-        if (removeBlock(x, y)) {
-          game.bank[0] += 1;
-          bankCounters[0].style.color = "#fff";
-          bankCounters[0].innerText = game.bank[0];
-        }
-      }
-      break;
-    case "tree":
-      if (game.currTool === "axe") {
-        if (removeBlock(x, y)) {
-          game.bank[3] += 1;
-          bankCounters[3].style.color = "#fff";
-          bankCounters[3].innerText = game.bank[3];
-        }
-      }
-      break;
-    case "treeLeafs":
-      if (game.currTool === "axe") {
-        if (removeBlock(x, y)) {
-          game.bank[4] += 1;
-          bankCounters[4].style.color = "#fff";
-          bankCounters[4].innerText = game.bank[4];
-        }
-      }
-      break;
-    case "rock":
-      if (game.currTool === "pickaxe") {
-        if (removeBlock(x, y)) {
-          game.bank[2] += 1;
-          bankCounters[2].style.color = "#fff";
-          bankCounters[2].innerText = game.bank[2];
-        }
-      }
-      break;
-    default:
-      break;
-  }
-});
-
-// let x = 2;
-
-// window.addEventListener("mouseover", (e) => {
-//   console.log(e);
-//   if (e.target.classList.contains("tool") && x === 2) {
-//     e.target.style.cursor = "wait";
-//   } else {
-//     e.target.style.cursor = "pointer";
-//   }
-
-//   if (e.target.classList.contains("unit")) {
-//     x = 3;
-//   }
-// });
 
 startGame();
