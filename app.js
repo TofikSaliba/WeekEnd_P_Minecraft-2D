@@ -6,16 +6,16 @@ function startGame() {
     splash.style.animation = "fadeOut 1.5s ease-in forwards";
     document.querySelector(".toolsBox").style.visibility = "visible";
 
-    setUnits(game1);
-    drawTerrain(game1);
-    styleClouds(game1);
-    toolBoxListener(game1);
-    bankListener(game1);
-    resetButton(game1);
+    setUnits(gameObj);
+    drawTerrain(gameObj);
+    styleClouds(gameObj);
+    toolBoxListener(gameObj);
+    bankListener(gameObj);
+    resetButton(gameObj);
     setTimeout(() => {
       splash.style.display = "none";
       splash.style.zIndex = "-100";
-      startListening(game1);
+      startListening(gameObj);
     }, 1500);
   });
 }
@@ -128,15 +128,9 @@ function makeTree(unit, index, units) {
     if (i < 3) {
       units[index - i][unit.yIndex].setAttribute("Data-type", "tree");
     } else {
-      units[index - i][unit.yIndex - 1].setAttribute(
-        "Data-type",
-        "treeLeafs"
-      );
+      units[index - i][unit.yIndex - 1].setAttribute("Data-type", "treeLeafs");
       units[index - i][unit.yIndex].setAttribute("Data-type", "treeLeafs");
-      units[index - i][unit.yIndex + 1].setAttribute(
-        "Data-type",
-        "treeLeafs"
-      );
+      units[index - i][unit.yIndex + 1].setAttribute("Data-type", "treeLeafs");
     }
   }
 }
@@ -192,6 +186,25 @@ function checkCollapse(x, y, game) {
     right = game.units[x][y + 1]
       ? game.units[x][y + 1].getAttribute("Data-type")
       : true;
+
+  const botLeft = game.units[x + 1]
+      ? game.units[x + 1][y - 1]
+        ? game.units[x + 1][y - 1].getAttribute("Data-type")
+        : false
+      : false,
+    botRight = game.units[x + 1]
+      ? game.units[x + 1][y + 1]
+        ? game.units[x + 1][y + 1].getAttribute("Data-type")
+        : false
+      : false;
+  if (
+    ((left && botLeft) || (right && botRight)) &&
+    game.units[x][y].getAttribute("Data-type") === "treeLeafs" &&
+    bot === "tree"
+  ) {
+    return false;
+  }
+
   if ((top && bot && !left && !right) || (!top && !bot && left && right)) {
     return true;
   }
@@ -202,6 +215,7 @@ function checkCollapse(x, y, game) {
   ) {
     return true;
   }
+
   const topLeft = game.units[x - 1]
       ? game.units[x - 1][y - 1]
         ? !game.units[x - 1][y - 1].getAttribute("Data-type")
@@ -283,6 +297,17 @@ function buildBlock(x, y, game) {
     }
   }
   if (x + 1 === 20 && temp.indexOf("dirt") !== -1) {
+    if (game.bank[game.building[game.building.block]] > 0) {
+      game.units[x][y].setAttribute("Data-type", game.building.block);
+      return true;
+    }
+  }
+  if (
+    temp === "rock" &&
+    game.units[x + 1] &&
+    game.units[x + 1][y].getAttribute("Data-type") &&
+    game.units[x + 1][y].getAttribute("Data-type") === "dirtGrass"
+  ) {
     if (game.bank[game.building[game.building.block]] > 0) {
       game.units[x][y].setAttribute("Data-type", game.building.block);
       return true;
@@ -440,7 +465,7 @@ function startListening(game) {
   });
 }
 
-const game1 = {
+const gameObj = {
   units: [],
   COL_NUM: 200,
   ROW_NUM: 20,
