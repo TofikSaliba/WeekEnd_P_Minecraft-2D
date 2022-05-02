@@ -91,7 +91,7 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #111;
 }
 
 /* Handle */
@@ -132,6 +132,7 @@
   height: 100%;
   width: 18%;
   min-width: 230px;
+  background: #111;
 }
 
 .unit {
@@ -158,10 +159,6 @@
 
 [Data-tool="build"] {
   cursor: url("./images/build.png"), auto;
-}
-
-.tool2 {
-  border: 1px solid black;
 }
 
 .tools {
@@ -254,6 +251,35 @@
 
 [Data-type="dirt"] {
   background: url(./images/dirt.webp) no-repeat center center/cover;
+}
+
+/*! reset game button */
+.crafting {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.crafting button {
+  margin-bottom: 4rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  background: aqua;
+  border: none;
+  box-shadow: 0 8px #999;
+}
+
+/* ----- Hovering and Pressing (shadow) ----- */
+.pressDown:hover {
+  opacity: 0.7;
+}
+
+.pressDown:active {
+  background: #0d9bbe;
+  box-shadow: 0 3px #666;
+  transform: translateY(5px);
 }
 
 /*! smaller screens */
