@@ -124,7 +124,7 @@ function styleClouds({ units, COL_NUM }) {
 
 function makeTree(unit, index, units) {
   unit.setAttribute("Data-type", "tree");
-  for (let i = 1; i < 6; i++) {
+  for (let i = 1; i < 7; i++) {
     if (i < 3) {
       units[index - i][unit.yIndex].setAttribute("Data-type", "tree");
     } else {
